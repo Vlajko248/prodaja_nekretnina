@@ -1,0 +1,52 @@
+created:
+    - app/Http/Controllers/KupacController.php
+    - app/Http/Controllers/AgentController.php
+    - app/Http/Controllers/NekretninaController.php
+    - app/Http/Controllers/ProdajaController.php
+    - database/factories/KupacFactory.php
+    - database/factories/AgentFactory.php
+    - database/factories/NekretninaFactory.php
+    - database/factories/ProdajaFactory.php
+    - database/migrations/2026_01_05_201915_create_kupacs_table.php
+    - database/migrations/2026_01_05_201916_create_agents_table.php
+    - database/migrations/2026_01_05_201917_create_nekretninas_table.php
+    - database/migrations/2026_01_05_201918_create_prodajas_table.php
+    - app/Models/Kupac.php
+    - app/Models/Agent.php
+    - app/Models/Nekretnina.php
+    - app/Models/Prodaja.php
+    - tests/Feature/Http/Controllers/KupacControllerTest.php
+    - tests/Feature/Http/Controllers/AgentControllerTest.php
+    - tests/Feature/Http/Controllers/NekretninaControllerTest.php
+    - tests/Feature/Http/Controllers/ProdajaControllerTest.php
+    - app/Http/Requests/KupacStoreRequest.php
+    - app/Http/Requests/KupacUpdateRequest.php
+    - app/Http/Requests/AgentStoreRequest.php
+    - app/Http/Requests/AgentUpdateRequest.php
+    - app/Http/Requests/NekretninaStoreRequest.php
+    - app/Http/Requests/NekretninaUpdateRequest.php
+    - app/Http/Requests/ProdajaStoreRequest.php
+    - app/Http/Requests/ProdajaUpdateRequest.php
+    - resources/views/kupac/index.blade.php
+    - resources/views/kupac/create.blade.php
+    - resources/views/kupac/show.blade.php
+    - resources/views/kupac/edit.blade.php
+    - resources/views/agent/index.blade.php
+    - resources/views/agent/create.blade.php
+    - resources/views/agent/show.blade.php
+    - resources/views/agent/edit.blade.php
+    - resources/views/nekretnina/index.blade.php
+    - resources/views/nekretnina/create.blade.php
+    - resources/views/nekretnina/show.blade.php
+    - resources/views/nekretnina/edit.blade.php
+    - resources/views/prodaja/index.blade.php
+    - resources/views/prodaja/create.blade.php
+    - resources/views/prodaja/show.blade.php
+    - resources/views/prodaja/edit.blade.php
+updated:
+    - routes/web.php
+models:
+    Kupac: { ime: 'string:100', prezime: 'string:100', telefon: 'string:30', email: 'string nullable', timestamps: timestamps }
+    Agent: { ime: 'string:100', prezime: 'string:100', email: 'string unique', timestamps: timestamps }
+    Nekretnina: { oznaka: 'string:50 unique', povrsina_m2: 'decimal:8,2', cena: 'decimal:12,2', status: 'string default:slobodna', timestamps: timestamps }
+    Prodaja: { kupac_id: 'id foreign:Kupac', agent_id: 'id foreign:Agent', nekretnina_id: 'id foreign:Nekretnina', datum_kreiranja: date, status: 'string default:nacrt', timestamps: timestamps }

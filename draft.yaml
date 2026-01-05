@@ -1,0 +1,38 @@
+models:
+  Kupac:
+    ime: string:100
+    prezime: string:100
+    telefon: string:30
+    email: string nullable
+    timestamps: true
+
+  Agent:
+    ime: string:100
+    prezime: string:100
+    email: string unique
+    timestamps: true
+
+  Nekretnina:
+    oznaka: string:50 unique
+    povrsina_m2: decimal:8,2
+    cena: decimal:12,2
+    status: string default:slobodna
+    timestamps: true
+
+  Prodaja:
+    kupac_id: id foreign:Kupac
+    agent_id: id foreign:Agent
+    nekretnina_id: id foreign:Nekretnina
+    datum_kreiranja: date
+    status: string default:nacrt
+    timestamps: true
+
+controllers:
+  Kupac:
+    resource: web
+  Agent:
+    resource: web
+  Nekretnina:
+    resource: web
+  Prodaja:
+    resource: web
