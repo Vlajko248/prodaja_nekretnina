@@ -9,6 +9,8 @@ class Nekretnina extends Model
 {
     use HasFactory;
 
+    protected $table = 'nekretninas';
+
     /**
      * The attributes that are mass assignable.
      *

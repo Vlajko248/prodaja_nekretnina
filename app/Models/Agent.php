@@ -9,6 +9,8 @@ class Agent extends Model
 {
     use HasFactory;
 
+    protected $table = 'agents';
+
     /**
      * The attributes that are mass assignable.
      *

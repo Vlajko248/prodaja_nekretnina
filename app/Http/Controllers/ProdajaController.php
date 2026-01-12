@@ -4,63 +4,101 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProdajaStoreRequest;
 use App\Http\Requests\ProdajaUpdateRequest;
+use App\Models\Agent;
+use App\Models\Kupac;
+use App\Models\Nekretnina;
 use App\Models\Prodaja;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 
 class ProdajaController extends Controller
 {
-    public function index(Request $request): Response
+    private array $statusi = ['nacrt', 'rezervisana', 'završena', 'otkazana'];
+
+    public function index(Request $request): View
     {
-        $prodajas = Prodaja::all();
+        $prodaje = Prodaja::with(['kupac', 'agent', 'nekretnina'])
+            ->orderByDesc('id')
+            ->get();
 
         return view('prodaje.index', [
-            'prodajas' => $prodajas,
+            'prodaje' => $prodaje,
         ]);
     }
 
-    public function create(Request $request): Response
+    public function create(Request $request): View
     {
-        return view('prodaje.create');
+        return view('prodaje.create', [
+            'kupci' => Kupac::orderBy('prezime')->orderBy('ime')->get(),
+            'agenti' => Agent::orderBy('prezime')->orderBy('ime')->get(),
+            'nekretnine' => Nekretnina::where('status', 'slobodno')->orderBy('oznaka')->get(),
+            'statusi' => $this->statusi,
+        ]);
     }
 
-    public function store(ProdajaStoreRequest $request): Response
+    public function store(ProdajaStoreRequest $request): RedirectResponse
     {
-        $prodaja = Prodaja::create($request->validated());
+        $data = $request->validated();
 
-        $request->session()->flash('prodaja.id', $prodaja->id);
+        // defaulti
+        $data['status'] = $data['status'] ?? 'nacrt';
+        $data['datum_kreiranja'] = $data['datum_kreiranja'] ?? Carbon::today()->toDateString();
 
-        return redirect()->route('prodaje.index');
+        // ako želiš da forsiraš statuse na dozvoljene:
+        if (!in_array($data['status'], $this->statusi, true)) {
+            $data['status'] = 'nacrt';
+        }
+
+        Prodaja::create($data);
+
+        return redirect()->route('prodaja.index')->with('success', 'Prodaja je uspešno kreirana.');
     }
 
-    public function show(Request $request, Prodaja $prodaja): Response
+    public function show(Request $request, Prodaja $prodaja): View
     {
+        $prodaja->load(['kupac', 'agent', 'nekretnina']);
+
         return view('prodaje.show', [
             'prodaja' => $prodaja,
         ]);
     }
 
-    public function edit(Request $request, Prodaja $prodaja): Response
+    public function edit(Request $request, Prodaja $prodaja): View
     {
+        // Nekretnine: nudimo slobodne + trenutno izabranu (da edit ne pukne)
+        $nekretnine = Nekretnina::where('status', 'slobodno')
+            ->orWhere('id', $prodaja->nekretnina_id)
+            ->orderBy('oznaka')
+            ->get();
+
         return view('prodaje.edit', [
             'prodaja' => $prodaja,
+            'kupci' => Kupac::orderBy('prezime')->orderBy('ime')->get(),
+            'agenti' => Agent::orderBy('prezime')->orderBy('ime')->get(),
+            'nekretnine' => $nekretnine,
+            'statusi' => $this->statusi,
         ]);
     }
 
-    public function update(ProdajaUpdateRequest $request, Prodaja $prodaja): Response
+    public function update(ProdajaUpdateRequest $request, Prodaja $prodaja): RedirectResponse
     {
-        $prodaja->update($request->validated());
+        $data = $request->validated();
 
-        $request->session()->flash('prodaja.id', $prodaja->id);
+        if (isset($data['status']) && !in_array($data['status'], $this->statusi, true)) {
+            unset($data['status']);
+        }
 
-        return redirect()->route('prodaja.index');
+        $prodaja->update($data);
+
+        return redirect()->route('prodaja.index')->with('success', 'Prodaja je uspešno izmenjena.');
     }
 
-    public function destroy(Request $request, Prodaja $prodaja): Response
+    public function destroy(Request $request, Prodaja $prodaja): RedirectResponse
     {
         $prodaja->delete();
 
-        return redirect()->route('prodaja.index');
+        return redirect()->route('prodaja.index')->with('success', 'Prodaja je obrisana.');
     }
 }

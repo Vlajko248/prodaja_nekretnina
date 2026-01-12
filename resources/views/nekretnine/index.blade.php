@@ -15,7 +15,7 @@
         <option value="">Sve</option>
         <option value="slobodno" {{ ($status ?? '') === 'slobodno' ? 'selected' : '' }}>Slobodno</option>
         <option value="rezervisano" {{ ($status ?? '') === 'rezervisano' ? 'selected' : '' }}>Rezervisano</option>
-        <option value="prodata" {{ ($status ?? '') === 'prodata' ? 'selected' : '' }}>Prodato</option>
+        <option value="prodato" {{ ($status ?? '') === 'prodato' ? 'selected' : '' }}>Prodato</option>
     </select>
 </form>
 

@@ -15,9 +15,9 @@ return new class extends Migration
 
         Schema::create('prodajas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('kupac_id')->constrained();
-            $table->foreignId('agent_id')->constrained();
-            $table->foreignId('nekretnina_id')->constrained();
+            $table->foreignId('kupac_id')->constrained('kupacs');
+            $table->foreignId('agent_id')->constrained('agents');
+            $table->foreignId('nekretnina_id')->constrained('nekretninas');
             $table->date('datum_kreiranja');
             $table->string('status')->default('nacrt');
             $table->timestamps();

@@ -30,10 +30,10 @@ class NekretninaController extends Controller
     }
     
 
-public function create(Request $request): View
-{
-    return view('nekretnine.create');
-}
+    public function create(Request $request): View
+    {
+        return view('nekretnine.create');
+    }
 
 public function store(NekretninaStoreRequest $request): RedirectResponse
 {
