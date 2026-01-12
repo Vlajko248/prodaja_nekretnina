@@ -11,7 +11,7 @@ use Illuminate\View\View;
 
 class KupacController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): View
     {
         $kupacs = Kupac::all();
 
@@ -20,47 +20,47 @@ class KupacController extends Controller
         ]);
     }
 
-    public function create(Request $request): Response
+    public function create(Request $request): View
     {
         return view('kupac.create');
     }
 
-    public function store(KupacStoreRequest $request): Response
+    public function store(KupacStoreRequest $request): RedirectResponse
     {
         $kupac = Kupac::create($request->validated());
 
         $request->session()->flash('kupac.id', $kupac->id);
 
-        return redirect()->route('kupacs.index');
+        return redirect()->route('kupac.index');
     }
 
-    public function show(Request $request, Kupac $kupac): Response
+    public function show(Request $request, Kupac $kupac): View
     {
         return view('kupac.show', [
             'kupac' => $kupac,
         ]);
     }
 
-    public function edit(Request $request, Kupac $kupac): Response
+    public function edit(Request $request, Kupac $kupac): View
     {
         return view('kupac.edit', [
             'kupac' => $kupac,
         ]);
     }
 
-    public function update(KupacUpdateRequest $request, Kupac $kupac): Response
+    public function update(KupacUpdateRequest $request, Kupac $kupac): RedirectResponse
     {
         $kupac->update($request->validated());
 
         $request->session()->flash('kupac.id', $kupac->id);
 
-        return redirect()->route('kupacs.index');
+        return redirect()->route('kupac.index');
     }
 
-    public function destroy(Request $request, Kupac $kupac): Response
+    public function destroy(Request $request, Kupac $kupac): RedirectResponse
     {
         $kupac->delete();
 
-        return redirect()->route('kupacs.index');
+        return redirect()->route('kupac.index');
     }
 }
