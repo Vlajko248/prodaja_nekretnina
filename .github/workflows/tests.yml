@@ -40,17 +40,13 @@ jobs:
       - name: Create .env.testing file
         run: |
           cp .env.example .env.testing
+          php artisan key:generate --env=testing
           sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env.testing
           sed -i 's/DB_HOST=.*/DB_HOST=mysql/' .env.testing
           sed -i 's/DB_PORT=.*/DB_PORT=3306/' .env.testing
           sed -i 's/DB_DATABASE=.*/DB_DATABASE=prodaja_nekretnina_test/' .env.testing
           sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env.testing
           sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=root/' .env.testing
-
-      - name: Set APP_KEY in .env.testing
-        run: |
-          KEY=$(php artisan key:generate --show)
-          sed -i "s/^APP_KEY=.*/APP_KEY=${KEY}/" .env.testing
 
       - name: Run migrations
         run: php artisan migrate --env=testing
