@@ -1,5 +1,7 @@
 # 🏠 Prodaja Nekretnina - Real Estate Management System
 
+![Tests & Code Style](https://github.com/Vlajko248/prodaja_nekretnina/actions/workflows/tests.yml/badge.svg)
+
 Profesionalni sistem za upravljanje nekretninama, kupcima, agentima i prodajama izgrađen sa Laravel 12 i Chart.js.
 
 **GitHub Repository**: [prodaja_nekretnina](https://github.com/your-username/prodaja_nekretnina)

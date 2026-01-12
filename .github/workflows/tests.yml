@@ -31,7 +31,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: mysql
+          extensions: pdo_mysql
           tools: composer:v2
 
       - name: Install dependencies
@@ -46,8 +46,10 @@ jobs:
           sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env.testing
           sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=root/' .env.testing
 
-      - name: Generate application key
-        run: php artisan key:generate --env=testing
+      - name: Set APP_KEY in .env.testing
+        run: |
+          KEY=$(php artisan key:generate --show)
+          sed -i "s/^APP_KEY=.*/APP_KEY=${KEY}/" .env.testing
 
       - name: Run migrations
         run: php artisan migrate --env=testing
