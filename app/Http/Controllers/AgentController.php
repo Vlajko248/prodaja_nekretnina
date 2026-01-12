@@ -15,14 +15,14 @@ class AgentController extends Controller
     {
         $agents = Agent::all();
 
-        return view('agent.index', [
+        return view('agenti.index', [
             'agents' => $agents,
         ]);
     }
 
     public function create(Request $request): Response
     {
-        return view('agent.create');
+        return view('agenti.create');
     }
 
     public function store(AgentStoreRequest $request): Response
@@ -31,19 +31,19 @@ class AgentController extends Controller
 
         $request->session()->flash('agent.id', $agent->id);
 
-        return redirect()->route('agents.index');
+        return redirect()->route('agenti.index');
     }
 
     public function show(Request $request, Agent $agent): Response
     {
-        return view('agent.show', [
+        return view('agenti.show', [
             'agent' => $agent,
         ]);
     }
 
     public function edit(Request $request, Agent $agent): Response
     {
-        return view('agent.edit', [
+        return view('agenti.edit', [
             'agent' => $agent,
         ]);
     }
@@ -54,13 +54,13 @@ class AgentController extends Controller
 
         $request->session()->flash('agent.id', $agent->id);
 
-        return redirect()->route('agents.index');
+        return redirect()->route('agenti.index');
     }
 
     public function destroy(Request $request, Agent $agent): Response
     {
         $agent->delete();
 
-        return redirect()->route('agents.index');
+        return redirect()->route('agenti.index');
     }
 }

@@ -37,16 +37,16 @@
                    href="{{ route('dashboard') }}">Kontrolna tabla</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('kupci.*') ? 'active' : '' }}"
-                   href="{{ route('kupci.index') }}">Kupci</a>
+                <a class="nav-link {{ request()->routeIs('kupac.*') ? 'active' : '' }}"
+                   href="{{ route('kupac.index') }}">Kupci</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('nekretnine.*') ? 'active' : '' }}"
-                   href="{{ route('nekretnine.index') }}">Nekretnine</a>
+                <a class="nav-link {{ request()->routeIs('nekretnina.*') ? 'active' : '' }}"
+                   href="{{ route('nekretnina.index') }}">Nekretnine</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->routeIs('prodaje.*') ? 'active' : '' }}"
-                   href="{{ route('prodaje.index') }}">Prodaje</a>
+                <a class="nav-link {{ request()->routeIs('prodaja.*') ? 'active' : '' }}"
+                   href="{{ route('prodaja.index') }}">Prodaje</a>
             </li>
         </ul>
 
@@ -82,16 +82,16 @@
                            href="{{ route('dashboard') }}">Kontrolna tabla</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('kupci.*') ? 'active' : '' }}"
-                           href="{{ route('kupci.index') }}">Kupci</a>
+                        <a class="nav-link {{ request()->routeIs('kupac.*') ? 'active' : '' }}"
+                           href="{{ route('kupac.index') }}">Kupci</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('nekretnine.*') ? 'active' : '' }}"
-                           href="{{ route('nekretnine.index') }}">Nekretnine</a>
+                        <a class="nav-link {{ request()->routeIs('nekretnina.*') ? 'active' : '' }}"
+                           href="{{ route('nekretnina.index') }}">Nekretnine</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('prodaje.*') ? 'active' : '' }}"
-                           href="{{ route('prodaje.index') }}">Prodaje</a>
+                        <a class="nav-link {{ request()->routeIs('prodaja.*') ? 'active' : '' }}"
+                           href="{{ route('prodaja.index') }}">Prodaje</a>
                     </li>
                 </ul>
 

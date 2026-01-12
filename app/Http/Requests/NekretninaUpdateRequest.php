@@ -20,7 +20,7 @@ class NekretninaUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'oznaka' => ['required', 'string', 'max:50', 'unique:nekretninas,oznaka'],
+            'oznaka' => ['required', 'string', 'max:50', 'unique:nekretninas,oznaka,' . $this->nekretnina->id],
             'povrsina_m2' => ['required', 'numeric', 'between:-999999.99,999999.99'],
             'cena' => ['required', 'numeric', 'between:-9999999999.99,9999999999.99'],
             'status' => ['required', 'string'],

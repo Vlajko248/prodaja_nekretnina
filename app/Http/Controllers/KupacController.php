@@ -15,14 +15,14 @@ class KupacController extends Controller
     {
         $kupacs = Kupac::all();
 
-        return view('kupac.index', [
+        return view('kupci.index', [
             'kupacs' => $kupacs,
         ]);
     }
 
     public function create(Request $request): View
     {
-        return view('kupac.create');
+        return view('kupci.create');
     }
 
     public function store(KupacStoreRequest $request): RedirectResponse
@@ -31,19 +31,19 @@ class KupacController extends Controller
 
         $request->session()->flash('kupac.id', $kupac->id);
 
-        return redirect()->route('kupac.index');
+        return redirect()->route('kupac.index')->with('success', 'Kupac je uspešno dodat.');
     }
 
     public function show(Request $request, Kupac $kupac): View
     {
-        return view('kupac.show', [
+        return view('kupci.show', [
             'kupac' => $kupac,
         ]);
     }
 
     public function edit(Request $request, Kupac $kupac): View
     {
-        return view('kupac.edit', [
+        return view('kupci.edit', [
             'kupac' => $kupac,
         ]);
     }
@@ -54,13 +54,13 @@ class KupacController extends Controller
 
         $request->session()->flash('kupac.id', $kupac->id);
 
-        return redirect()->route('kupac.index');
+        return redirect()->route('kupac.index')->with('success', 'Kupac je uspešno izmenjen.');
     }
 
     public function destroy(Request $request, Kupac $kupac): RedirectResponse
     {
         $kupac->delete();
 
-        return redirect()->route('kupac.index');
+        return redirect()->route('kupac.index')->with('success', 'Kupac je uspešno obrisan');
     }
 }

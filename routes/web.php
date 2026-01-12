@@ -21,9 +21,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Tvoje rute (CRUD)
-    Route::resource('kupci', KupacController::class);
-    Route::resource('nekretnine', NekretninaController::class);
-    Route::resource('prodaje', ProdajaController::class);
+    Route::resource('kupac', KupacController::class);
+    Route::resource('nekretnina', NekretninaController::class);
+    Route::resource('prodaja', ProdajaController::class);
 });
 
 require __DIR__.'/auth.php';

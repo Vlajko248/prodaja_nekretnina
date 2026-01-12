@@ -11,56 +11,60 @@ use Illuminate\View\View;
 
 class NekretninaController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): View
     {
-        $nekretninas = Nekretnina::all();
+        $status = $request->query('status'); // slobodna|rezervisano|prodata|null
 
-        return view('nekretnina.index', [
-            'nekretninas' => $nekretninas,
+        $query = Nekretnina::query();
+
+        if (!empty($status)) {
+            $query->where('status', $status);
+        }
+
+        $nekretnine = $query->orderBy('id', 'desc')->get();
+
+        return view('nekretnine.index', [
+            'nekretnine' => $nekretnine,
+            'status' => $status,
         ]);
     }
+    
 
-    public function create(Request $request): Response
-    {
-        return view('nekretnina.create');
-    }
+public function create(Request $request): View
+{
+    return view('nekretnine.create');
+}
 
-    public function store(NekretninaStoreRequest $request): Response
-    {
-        $nekretnina = Nekretnina::create($request->validated());
+public function store(NekretninaStoreRequest $request): RedirectResponse
+{
+    $nekretnina = Nekretnina::create($request->validated());
+    $request->session()->flash('nekretnina.id', $nekretnina->id);
 
-        $request->session()->flash('nekretnina.id', $nekretnina->id);
+        return redirect()->route('nekretnina.index')->with('success', 'Nekretnina je uspešno dodata.');
+}
 
-        return redirect()->route('nekretninas.index');
-    }
+public function show(Request $request, Nekretnina $nekretnina): View
+{
+    return view('nekretnine.show', compact('nekretnina'));
+}
 
-    public function show(Request $request, Nekretnina $nekretnina): Response
-    {
-        return view('nekretnina.show', [
-            'nekretnina' => $nekretnina,
-        ]);
-    }
+public function edit(Request $request, Nekretnina $nekretnina): View
+{
+    return view('nekretnine.edit', compact('nekretnina'));
+}
 
-    public function edit(Request $request, Nekretnina $nekretnina): Response
-    {
-        return view('nekretnina.edit', [
-            'nekretnina' => $nekretnina,
-        ]);
-    }
+public function update(NekretninaUpdateRequest $request, Nekretnina $nekretnina): RedirectResponse
+{
+    $nekretnina->update($request->validated());
+    $request->session()->flash('nekretnina.id', $nekretnina->id);
 
-    public function update(NekretninaUpdateRequest $request, Nekretnina $nekretnina): Response
-    {
-        $nekretnina->update($request->validated());
+    return redirect()->route('nekretnina.index')->with('success', 'Nekretnina je uspešno izmenjena.');
+}
 
-        $request->session()->flash('nekretnina.id', $nekretnina->id);
+public function destroy(Request $request, Nekretnina $nekretnina): RedirectResponse
+{
+    $nekretnina->delete();
+    return redirect()->route('nekretnina.index')->with('success', 'Nekretnina je uspešno obrisana.');
+}
 
-        return redirect()->route('nekretninas.index');
-    }
-
-    public function destroy(Request $request, Nekretnina $nekretnina): Response
-    {
-        $nekretnina->delete();
-
-        return redirect()->route('nekretninas.index');
-    }
 }

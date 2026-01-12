@@ -15,14 +15,14 @@ class ProdajaController extends Controller
     {
         $prodajas = Prodaja::all();
 
-        return view('prodaja.index', [
+        return view('prodaje.index', [
             'prodajas' => $prodajas,
         ]);
     }
 
     public function create(Request $request): Response
     {
-        return view('prodaja.create');
+        return view('prodaje.create');
     }
 
     public function store(ProdajaStoreRequest $request): Response
@@ -31,19 +31,19 @@ class ProdajaController extends Controller
 
         $request->session()->flash('prodaja.id', $prodaja->id);
 
-        return redirect()->route('prodajas.index');
+        return redirect()->route('prodaje.index');
     }
 
     public function show(Request $request, Prodaja $prodaja): Response
     {
-        return view('prodaja.show', [
+        return view('prodaje.show', [
             'prodaja' => $prodaja,
         ]);
     }
 
     public function edit(Request $request, Prodaja $prodaja): Response
     {
-        return view('prodaja.edit', [
+        return view('prodaje.edit', [
             'prodaja' => $prodaja,
         ]);
     }
@@ -54,13 +54,13 @@ class ProdajaController extends Controller
 
         $request->session()->flash('prodaja.id', $prodaja->id);
 
-        return redirect()->route('prodajas.index');
+        return redirect()->route('prodaja.index');
     }
 
     public function destroy(Request $request, Prodaja $prodaja): Response
     {
         $prodaja->delete();
 
-        return redirect()->route('prodajas.index');
+        return redirect()->route('prodaja.index');
     }
 }
