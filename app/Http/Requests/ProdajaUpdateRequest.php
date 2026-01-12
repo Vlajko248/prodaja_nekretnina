@@ -4,6 +4,12 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Validates input for updating an existing `Prodaja` record.
+ *
+ * Applies the same constraints as store: existing foreign keys,
+ * required `datum_kreiranja` date, and string `status`.
+ */
 class ProdajaUpdateRequest extends FormRequest
 {
     /**

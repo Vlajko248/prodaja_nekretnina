@@ -4,6 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Validates input for updating an existing `Agent` record.
+ *
+ * Same constraints as store: name fields required and valid `email`.
+ */
 class AgentUpdateRequest extends FormRequest
 {
     /**

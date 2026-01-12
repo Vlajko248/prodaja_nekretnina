@@ -7,8 +7,29 @@ use App\Models\Nekretnina;
 use App\Models\Prodaja;
 use Illuminate\View\View;
 
+/**
+ * DashboardController
+ *
+ * Aggregates analytics metrics for the dashboard view.
+ * Provides counts, status breakdowns, recent sales, total revenue,
+ * and sales funnel values (EUR) derived from related models.
+ *
+ * Route: dashboard (GET)
+ * View: dashboard
+ */
 class DashboardController extends Controller
 {
+    /**
+     * Build and return the dashboard view data.
+     *
+     * Data contract:
+     * - kupciUkupno (int)
+     * - nekretnineUkupno, nekretnineSlobodno, nekretnineRezervisano, nekretnineProdato (int)
+     * - prodajeUkupno, prodajeNacrt, prodajeRezervisano, prodajeZavrseno, prodajeOtkazana (int)
+     * - prihodUkupno (float)
+     * - poslednjeProdaje (Collection<Prodaja>) eager-loaded with kupac, agent, nekretnina
+     * - funnelNacrt, funnelRezervisana, funnelZavrsena, funnelOtkazana (float)
+     */
     public function index(): View
     {
         $kupciUkupno = Kupac::count();

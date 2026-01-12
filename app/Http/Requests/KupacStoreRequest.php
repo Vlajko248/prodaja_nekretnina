@@ -4,6 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Validates input for creating a new `Kupac` record.
+ *
+ * Requires `ime`, `prezime`, `telefon`, and optionally validates `email` format.
+ */
 class KupacStoreRequest extends FormRequest
 {
     /**

@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Model `Agent` maps to table `agents`.
+ *
+ * Fillable: `ime`, `prezime`, `email`.
+ * Casts `id` to integer.
+ */
 class Agent extends Model
 {
     use HasFactory;

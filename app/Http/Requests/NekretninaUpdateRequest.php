@@ -4,6 +4,12 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Validates input for updating an existing `Nekretnina` record.
+ *
+ * Keeps `oznaka` unique (excluding current model), checks numeric ranges
+ * for `povrsina_m2` and `cena`, and requires string `status`.
+ */
 class NekretninaUpdateRequest extends FormRequest
 {
     /**

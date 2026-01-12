@@ -4,6 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Validates input for updating an existing `Kupac` record.
+ *
+ * Same constraints as store: names and phone required, optional `email` format.
+ */
 class KupacUpdateRequest extends FormRequest
 {
     /**

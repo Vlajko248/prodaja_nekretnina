@@ -13,10 +13,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 
+/**
+ * ProdajaController
+ *
+ * Manages sales (prodaje) lifecycle: create, edit, update, delete.
+ * Implements status workflow: 'nacrt' → 'rezervisana' → 'završena' (or 'otkazana').
+ * Views: prodaje.index, prodaje.create, prodaje.show, prodaje.edit
+ * Routes (resource): prodaja.index, prodaja.create, prodaja.store, prodaja.show, prodaja.edit, prodaja.update, prodaja.destroy
+ */
 class ProdajaController extends Controller
 {
     private array $statusi = ['nacrt', 'rezervisana', 'završena', 'otkazana'];
 
+    /**
+     * Display a listing of sales with related models eager loaded.
+     * Route: prodaja.index
+     */
     public function index(Request $request): View
     {
         $prodaje = Prodaja::with(['kupac', 'agent', 'nekretnina'])
@@ -28,6 +40,11 @@ class ProdajaController extends Controller
         ]);
     }
 
+    /**
+     * Show the form for creating a new sale.
+     * Provides lists of kupci, agenti, nekretnine and allowed statusi.
+     * Route: prodaja.create
+     */
     public function create(Request $request): View
     {
         return view('prodaje.create', [
@@ -38,6 +55,14 @@ class ProdajaController extends Controller
         ]);
     }
 
+    /**
+     * Store a newly created sale.
+     * Applies defaults and enforces allowed statuses.
+     * Route: prodaja.store
+     *
+     * @param  ProdajaStoreRequest  $request  Validated data (kupac_id, agent_id, nekretnina_id, datum_kreiranja, status)
+     * @return RedirectResponse Redirect to prodaja.index with success message
+     */
     public function store(ProdajaStoreRequest $request): RedirectResponse
     {
         $data = $request->validated();
@@ -47,7 +72,7 @@ class ProdajaController extends Controller
         $data['datum_kreiranja'] = $data['datum_kreiranja'] ?? Carbon::today()->toDateString();
 
         // ako želiš da forsiraš statuse na dozvoljene:
-        if (!in_array($data['status'], $this->statusi, true)) {
+        if (! in_array($data['status'], $this->statusi, true)) {
             $data['status'] = 'nacrt';
         }
 
@@ -56,6 +81,10 @@ class ProdajaController extends Controller
         return redirect()->route('prodaja.index')->with('success', 'Prodaja je uspešno kreirana.');
     }
 
+    /**
+     * Display the specified sale with relations.
+     * Route: prodaja.show
+     */
     public function show(Request $request, Prodaja $prodaja): View
     {
         $prodaja->load(['kupac', 'agent', 'nekretnina']);
@@ -65,6 +94,11 @@ class ProdajaController extends Controller
         ]);
     }
 
+    /**
+     * Show the form for editing the specified sale.
+     * Ensures currently selected nekretnina is included even if not 'slobodno'.
+     * Route: prodaja.edit
+     */
     public function edit(Request $request, Prodaja $prodaja): View
     {
         // Nekretnine: nudimo slobodne + trenutno izabranu (da edit ne pukne)
@@ -82,11 +116,19 @@ class ProdajaController extends Controller
         ]);
     }
 
+    /**
+     * Update the specified sale.
+     * Validates status against allowed values.
+     * Route: prodaja.update
+     *
+     * @param  ProdajaUpdateRequest  $request  Validated data
+     * @return RedirectResponse Redirect to prodaja.index with success message
+     */
     public function update(ProdajaUpdateRequest $request, Prodaja $prodaja): RedirectResponse
     {
         $data = $request->validated();
 
-        if (isset($data['status']) && !in_array($data['status'], $this->statusi, true)) {
+        if (isset($data['status']) && ! in_array($data['status'], $this->statusi, true)) {
             unset($data['status']);
         }
 
@@ -95,6 +137,12 @@ class ProdajaController extends Controller
         return redirect()->route('prodaja.index')->with('success', 'Prodaja je uspešno izmenjena.');
     }
 
+    /**
+     * Remove the specified sale from storage.
+     * Route: prodaja.destroy
+     *
+     * @return RedirectResponse Redirect to prodaja.index with success message
+     */
     public function destroy(Request $request, Prodaja $prodaja): RedirectResponse
     {
         $prodaja->delete();

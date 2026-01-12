@@ -4,6 +4,12 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Validates input for creating a new `Nekretnina` record.
+ *
+ * Enforces unique `oznaka`, numeric `povrsina_m2` and `cena` ranges,
+ * and a required string `status`.
+ */
 class NekretninaStoreRequest extends FormRequest
 {
     /**

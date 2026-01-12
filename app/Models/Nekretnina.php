@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Model `Nekretnina` maps to table `nekretninas`.
+ *
+ * Fillable: `oznaka`, `povrsina_m2`, `cena`, `status`.
+ * Casts numeric fields for surface and price.
+ */
 class Nekretnina extends Model
 {
     use HasFactory;

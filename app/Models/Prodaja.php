@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Model `Prodaja` maps to table `prodajas`.
+ *
+ * Represents a sale linking `Kupac`, `Agent`, and `Nekretnina`.
+ * Fillable includes foreign keys, `datum_kreiranja`, and `status`.
+ * Relations: `kupac()`, `agent()`, `nekretnina()`.
+ */
 class Prodaja extends Model
 {
     use HasFactory;

@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Model `Kupac` maps to table `kupacs`.
+ *
+ * Fillable: `ime`, `prezime`, `telefon`, `email`.
+ * Casts `id` to integer.
+ */
 class Kupac extends Model
 {
     use HasFactory;

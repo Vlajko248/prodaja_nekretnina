@@ -4,6 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Validates input for creating a new `Agent` record.
+ *
+ * Requires name fields and a unique, valid `email`.
+ */
 class AgentStoreRequest extends FormRequest
 {
     /**

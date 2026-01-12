@@ -122,10 +122,10 @@ prodaja_nekretnina/
 │   │   ├── layouts/app.blade.php          # Main layout sa fixed sidebar (RUČNO)
 │   │   ├── welcome.blade.php              # Landing page (RUČNO)
 │   │   ├── dashboard.blade.php            # Analytics dashboard (RUČNO sa Chart.js)
-│   │   ├── kupci/                         # Buyer views
-│   │   ├── nekretnine/                    # Property views
-│   │   ├── agenti/                        # Agent views
-│   │   └── prodaje/                       # Sale views
+│   │   ├── kupac/                         # Buyer views
+│   │   ├── nekretnina/                    # Property views
+│   │   ├── agent/                         # Agent views
+│   │   └── prodaja/                       # Sale views
 │   ├── css/app.css
 │   └── js/app.js
 ├── routes/
@@ -512,6 +512,26 @@ Razvijeno sa Chart.js 4.4.0 za sve grafikone.
 - SVG sa zlatnom kućom
 - Vidljiv na svim stranicama
 - Inline data URI u layout-u
+
+---
+
+## 🖼️ Screenshots
+
+Dodajte nekoliko screenshot-ova za vizuelnu prezentaciju:
+
+- Landing page (welcome): prikaz logotipa i CTA dugmića
+- Dashboard: grafikoni (doughnut, bar, funnel) + tabela
+
+Predlog lokacije fajlova:
+- Kreirajte folder `docs/screenshots/` i snimite slike kao `welcome.png`, `dashboard.png`
+- U README možete referencirati slike ovako:
+
+```markdown
+![Welcome](docs/screenshots/welcome.png)
+![Dashboard](docs/screenshots/dashboard.png)
+```
+
+Napomena: Ako repozitorijum ostaje privatan, pazite da screenshot-ovi ne sadrže osetljive podatke.
 
 ---
 
