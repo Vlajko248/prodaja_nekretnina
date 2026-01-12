@@ -20,9 +20,9 @@ class ProdajaUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'kupac_id' => ['required', 'integer', 'exists:Kupac,id'],
-            'agent_id' => ['required', 'integer', 'exists:Agent,id'],
-            'nekretnina_id' => ['required', 'integer', 'exists:Nekretnina,id'],
+            'kupac_id' => ['required', 'integer', 'exists:kupacs,id'],
+            'agent_id' => ['required', 'integer', 'exists:agents,id'],
+            'nekretnina_id' => ['required', 'integer', 'exists:nekretninas,id'],
             'datum_kreiranja' => ['required', 'date'],
             'status' => ['required', 'string'],
         ];

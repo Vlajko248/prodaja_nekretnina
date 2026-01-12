@@ -40,15 +40,15 @@ class DashboardController extends Controller
         $funnelNacrt = Prodaja::where('prodajas.status', 'nacrt')
             ->join('nekretninas', 'prodajas.nekretnina_id', '=', 'nekretninas.id')
             ->sum('nekretninas.cena');
-        
+
         $funnelRezervisana = Prodaja::where('prodajas.status', 'rezervisana')
             ->join('nekretninas', 'prodajas.nekretnina_id', '=', 'nekretninas.id')
             ->sum('nekretninas.cena');
-        
+
         $funnelZavrsena = Prodaja::where('prodajas.status', 'završena')
             ->join('nekretninas', 'prodajas.nekretnina_id', '=', 'nekretninas.id')
             ->sum('nekretninas.cena');
-        
+
         $funnelOtkazana = Prodaja::where('prodajas.status', 'otkazana')
             ->join('nekretninas', 'prodajas.nekretnina_id', '=', 'nekretninas.id')
             ->sum('nekretninas.cena');
