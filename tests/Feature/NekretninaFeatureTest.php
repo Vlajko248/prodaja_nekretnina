@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Nekretnina;
+use App\Models\Prodaja;
 use App\Models\User;
 
 it('can create a new nekretnina (property)', function () {
@@ -44,6 +45,40 @@ it('can update nekretnina status from available to reserved', function () {
     ]);
 
     $response->assertRedirectToRoute('nekretnina.index');
+});
+
+it('cancels all draft prodajas when nekretnina is reserved', function () {
+    // Create a nekretnina and multiple draft sales
+    $nekretnina = Nekretnina::factory()->create(['status' => 'slobodno']);
+    $prodaja1 = Prodaja::factory()->create(['nekretnina_id' => $nekretnina->id, 'status' => 'nacrt']);
+    $prodaja2 = Prodaja::factory()->create(['nekretnina_id' => $nekretnina->id, 'status' => 'nacrt']);
+    $prodaja3 = Prodaja::factory()->create(['nekretnina_id' => $nekretnina->id, 'status' => 'rezervisana']); // not draft
+    
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    // Update nekretnina to reserved
+    $this->patch(route('nekretnina.update', $nekretnina), [
+        'oznaka' => $nekretnina->oznaka,
+        'povrsina_m2' => $nekretnina->povrsina_m2,
+        'cena' => $nekretnina->cena,
+        'status' => 'rezervisano',
+    ]);
+
+    // Assert draft prodajas are now canceled
+    $this->assertDatabaseHas('prodajas', [
+        'id' => $prodaja1->id,
+        'status' => 'otkazana',
+    ]);
+    $this->assertDatabaseHas('prodajas', [
+        'id' => $prodaja2->id,
+        'status' => 'otkazana',
+    ]);
+    // Assert reserved prodaja stays unchanged
+    $this->assertDatabaseHas('prodajas', [
+        'id' => $prodaja3->id,
+        'status' => 'rezervisana',
+    ]);
 });
 
 it('can list all properties grouped by status', function () {

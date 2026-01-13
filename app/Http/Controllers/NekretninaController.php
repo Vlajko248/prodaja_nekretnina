@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\NekretninaStoreRequest;
 use App\Http\Requests\NekretninaUpdateRequest;
 use App\Models\Nekretnina;
+use App\Models\Prodaja;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -85,6 +86,8 @@ class NekretninaController extends Controller
 
     /**
      * Update the specified property.
+     * When nekretnina status changes to 'rezervisano', automatically cancels
+     * all sales (prodaje) in 'nacrt' status linked to this property.
      * Route: nekretnina.update
      *
      * @param  NekretninaUpdateRequest  $request  Validated data
@@ -92,7 +95,16 @@ class NekretninaController extends Controller
      */
     public function update(NekretninaUpdateRequest $request, Nekretnina $nekretnina): RedirectResponse
     {
-        $nekretnina->update($request->validated());
+        $data = $request->validated();
+
+        // Ako se status menja na 'rezervisano', otkazujemo sve 'nacrt' prodaje
+        if (isset($data['status']) && $data['status'] === 'rezervisano' && $nekretnina->status !== 'rezervisano') {
+            Prodaja::where('nekretnina_id', $nekretnina->id)
+                ->where('status', 'nacrt')
+                ->update(['status' => 'otkazana']);
+        }
+
+        $nekretnina->update($data);
         $request->session()->flash('nekretnina.id', $nekretnina->id);
 
         return redirect()->route('nekretnina.index')->with('success', 'Nekretnina je uspešno izmenjena.');

@@ -58,6 +58,7 @@ class ProdajaController extends Controller
     /**
      * Store a newly created sale.
      * Applies defaults and enforces allowed statuses.
+     * When creating a sale, if status is 'rezervisana', sets nekretnina status to 'rezervisano'.
      * Route: prodaja.store
      *
      * @param  ProdajaStoreRequest  $request  Validated data (kupac_id, agent_id, nekretnina_id, datum_kreiranja, status)
@@ -74,6 +75,13 @@ class ProdajaController extends Controller
         // ako želiš da forsiraš statuse na dozvoljene:
         if (! in_array($data['status'], $this->statusi, true)) {
             $data['status'] = 'nacrt';
+        }
+
+        // Ako je prodaja 'rezervisana', ažuriramo status nekretnine na 'rezervisano'
+        if ($data['status'] === 'rezervisana') {
+            Nekretnina::findOrFail($data['nekretnina_id'])->update([
+                'status' => 'rezervisano',
+            ]);
         }
 
         Prodaja::create($data);
@@ -118,7 +126,11 @@ class ProdajaController extends Controller
 
     /**
      * Update the specified sale.
-     * Validates status against allowed values.
+     * When sale status changes, automatically updates property (nekretnina) status:
+     * - 'nacrt' → nekretnina 'slobodno'
+     * - 'rezervisana' → nekretnina 'rezervisano' + cancels all other draft sales
+     * - 'završena' → nekretnina 'prodato'
+     * - 'otkazana' → nekretnina 'slobodno'
      * Route: prodaja.update
      *
      * @param  ProdajaUpdateRequest  $request  Validated data
@@ -130,6 +142,28 @@ class ProdajaController extends Controller
 
         if (isset($data['status']) && ! in_array($data['status'], $this->statusi, true)) {
             unset($data['status']);
+        }
+
+        // Ako se status prodaje promenio, ažuriramo status nekretnine
+        if (isset($data['status']) && $data['status'] !== $prodaja->status) {
+            $statusMap = [
+                'nacrt' => 'slobodno',
+                'rezervisana' => 'rezervisano',
+                'završena' => 'prodato',
+                'otkazana' => 'slobodno',
+            ];
+
+            $prodaja->nekretnina->update([
+                'status' => $statusMap[$data['status']] ?? 'slobodno',
+            ]);
+
+            // Ako se prodaja prebaca na 'rezervisana', otkazujemo sve druge 'nacrt' prodaje
+            if ($data['status'] === 'rezervisana') {
+                Prodaja::where('nekretnina_id', $prodaja->nekretnina_id)
+                    ->where('id', '!=', $prodaja->id)
+                    ->where('status', 'nacrt')
+                    ->update(['status' => 'otkazana']);
+            }
         }
 
         $prodaja->update($data);

@@ -41,6 +41,8 @@ it('can create a new prodaja (sale)', function () {
 it('can update prodaja status from draft to reserved', function () {
     // Create a prodaja with draft status
     $prodaja = Prodaja::factory()->create(['status' => 'nacrt']);
+    $nekretnina = $prodaja->nekretnina;
+    $nekretnina->update(['status' => 'slobodno']);
     $user = User::factory()->create();
 
     // Simulate authenticated request
@@ -61,8 +63,45 @@ it('can update prodaja status from draft to reserved', function () {
         'status' => 'rezervisana',
     ]);
 
+    // Assert that nekretnina status was also updated
+    $this->assertDatabaseHas('nekretninas', [
+        'id' => $nekretnina->id,
+        'status' => 'rezervisano',
+    ]);
+
     // Assert redirect to index
     $response->assertRedirectToRoute('prodaja.index');
+});
+
+it('cancels other draft prodajas when one is reserved', function () {
+    // Create multiple draft sales for the same property
+    $nekretnina = Nekretnina::factory()->create(['status' => 'slobodno']);
+    $prodaja1 = Prodaja::factory()->create(['nekretnina_id' => $nekretnina->id, 'status' => 'nacrt']);
+    $prodaja2 = Prodaja::factory()->create(['nekretnina_id' => $nekretnina->id, 'status' => 'nacrt']);
+    
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    // Update first prodaja to reserved
+    $this->patch(route('prodaja.update', $prodaja1), [
+        'nekretnina_id' => $nekretnina->id,
+        'kupac_id' => $prodaja1->kupac_id,
+        'agent_id' => $prodaja1->agent_id,
+        'status' => 'rezervisana',
+        'datum_kreiranja' => $prodaja1->datum_kreiranja,
+    ]);
+
+    // Assert first prodaja is reserved
+    $this->assertDatabaseHas('prodajas', [
+        'id' => $prodaja1->id,
+        'status' => 'rezervisana',
+    ]);
+    
+    // Assert second prodaja is canceled
+    $this->assertDatabaseHas('prodajas', [
+        'id' => $prodaja2->id,
+        'status' => 'otkazana',
+    ]);
 });
 
 it('can view all prodajas', function () {
