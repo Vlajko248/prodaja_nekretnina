@@ -229,7 +229,7 @@ Svi kontroleri generirani sa `make:controller {Name} --resource` i onda ručno a
 - `store()` - Čuvanje nove nekretnine
 - `show()` - Detalji nekretnine
 - `edit()` - Forma za izmenu
-- `update()` - Čuvanje izmene
+- `update()` - Čuvanje izmene; **automatski otkazuje sve 'nacrt' prodaje** kada se nekretnina prebaci na 'rezervisano'
 - `destroy()` - Brisanje nekretnine
 
 ### ProdajaController - `/prodaja`
@@ -238,9 +238,10 @@ Svi kontroleri generirani sa `make:controller {Name} --resource` i onda ručno a
 - `store()` - Čuvanje nove prodaje
 - `show()` - Detalji prodaje
 - `edit()` - Forma za izmenu status-a
-- `update()` - Čuvanje izmene prodaje
+- `update()` - Čuvanje izmene prodaje; **automatski otkazuje druge 'nacrt' prodaje** kada se jedna prebaci na 'rezervisana'
 - `destroy()` - Brisanje prodaje
 - **Status Workflow**: 'nacrt' → 'rezervisana' → 'završena' (ili 'otkazana')
+- **Auto-sync**: Kada se status prodaje promeni, automatski se ažurira status nekretnine
 
 ### AgentController - `/agent`
 - `index()` - Lista agenata
@@ -292,10 +293,23 @@ Svi kontroleri generirani sa `make:controller {Name} --resource` i onda ručno a
 ### USE CASE 4: Ažuriranje Status-a Prodaje (Edit Sale)
 **Ruta**: `PATCH /prodaja/{id}` (forma na `/prodaja/{id}/edit`)
 - Workflow statusa: nacrt → rezervisana → završena
-- Logika: Validacija novog status-a, ažuriranje prodaje
+- Logika: 
+  - Validacija novog status-a, ažuriranje prodaje
+  - Automatski ažurira status nekretnine (nacrt→slobodno, rezervisana→rezervisano, završena→prodato, otkazana→slobodno)
+  - **Ako se prodaja prebaci na 'rezervisana', sve druge 'nacrt' prodaje za istu nekretninu se otkazuju**
 - Izlaz: Preusmeravanje na listu prodaja
 - Implementacija: `ProdajaController::update()` + `ProdajaUpdateRequest`
 - **Test**: `ProdajaFeatureTest::test_can_update_prodaja_status_from_draft_to_reserved` ✅
+- **Test**: `ProdajaFeatureTest::test_cancels_other_draft_prodajas_when_one_is_reserved` ✅
+
+### USE CASE 5: Prebacivanje Nekretnine u Rezervisano
+**Ruta**: `PATCH /nekretnina/{id}` (forma na `/nekretnina/{id}/edit`)
+- Logika:
+  - Ažurira status nekretnine
+  - **Ako se nekretnina prebaci na 'rezervisano', sve 'nacrt' prodaje za tu nekretninu se otkazuju**
+- Izlaz: Preusmeravanje na listu nekretnina
+- Implementacija: `NekretninaController::update()` + `NekretninaUpdateRequest`
+- **Test**: `NekretninaFeatureTest::test_cancels_all_draft_prodajas_when_nekretnina_is_reserved` ✅
 
 ---
 
@@ -323,9 +337,9 @@ php artisan test tests/Feature/ProdajaFeatureTest.php
 php artisan test --env=testing --coverage
 ```
 
-### Testovi (10 Testova, 26 Asertcija) - Svi Prolaze ✅
+### Testovi (12 Testova, 32 Asertcija) - Svi Prolaze ✅
 
-#### NekretninaFeatureTest.php (4 testa)
+#### NekretninaFeatureTest.php (5 testova)
 1. ✅ `test_can_create_a_new_nekretnina` 
    - Testira: POST `/nekretnina` sa validnim podacima
    - Asertcije: `assertDatabaseHas()`, `assertRedirectToRoute()`
@@ -334,35 +348,47 @@ php artisan test --env=testing --coverage
    - Testira: PATCH `/nekretnina/{id}` - ažuriranje status-a
    - Asertcije: `assertDatabaseHas()`, `assertRedirectToRoute()`
 
-3. ✅ `test_can_list_all_properties_grouped_by_status`
+3. ✅ `test_cancels_all_draft_prodajas_when_nekretnina_is_reserved`
+   - Testira: Automatsko otkazivanje 'nacrt' prodaja
+   - Asertcije: Proverava da se draft prodaje otkazuju, a rezervisane ostaju
+
+4. ✅ `test_can_list_all_properties_grouped_by_status`
    - Testira: GET `/nekretnina` - prikaz liste
    - Asertcije: `assertStatus(200)`, `assertViewHas('nekretnine')`
 
-4. ✅ `test_can_delete_a_nekretnina`
+5. ✅ `test_can_delete_a_nekretnina`
    - Testira: DELETE `/nekretnina/{id}`
    - Asertcije: `assertDatabaseMissing()`, `assertRedirectToRoute()`
 
-#### ProdajaFeatureTest.php (4 testa)
-5. ✅ `test_can_create_a_new_prodaja_sale`
+#### ProdajaFeatureTest.php (5 testova)
+6. ✅ `test_can_create_a_new_prodaja_sale`
    - Testira: POST `/prodaja` sa foreign key validacijom
    - Asertcije: `assertDatabaseHas()`, `assertRedirectToRoute()`
 
-6. ✅ `test_can_update_prodaja_status_from_draft_to_reserved`
+7. ✅ `test_can_update_prodaja_status_from_draft_to_reserved`
    - Testira: PATCH `/prodaja/{id}` - status workflow
-   - Asertcije: `assertDatabaseHas()`, `assertRedirectToRoute()`
+   - Asertcije: Proverava prodaju i nekretninu status
 
-7. ✅ `test_can_view_all_prodajas`
+8. ✅ `test_cancels_other_draft_prodajas_when_one_is_reserved`
+   - Testira: Automatsko otkazivanje drugih 'nacrt' prodaja
+   - Asertcije: Proverava da se samo ista nekretnina otkazuje
+
+9. ✅ `test_can_view_all_prodajas`
    - Testira: GET `/prodaja` - prikaz liste
    - Asertcije: `assertStatus(200)`, `assertViewHas('prodaje')`
 
-8. ✅ `test_can_delete_a_prodaja`
-   - Testira: DELETE `/prodaja/{id}`
-   - Asertcije: `assertDatabaseMissing()`, `assertRedirectToRoute()`
+10. ✅ `test_can_delete_a_prodaja`
+    - Testira: DELETE `/prodaja/{id}`
+    - Asertcije: `assertDatabaseMissing()`, `assertRedirectToRoute()`
 
 #### ExampleTest.php (2 testa)
-9. ✅ `test_returns_a_successful_response`
-   - Testira: GET `/` - home page
-   - Asertcije: `assertStatus(200)`
+11. ✅ `test_returns_a_successful_response`
+    - Testira: GET `/` - home page
+    - Asertcije: `assertStatus(200)`
+
+12. ✅ `that_true_is_true`
+    - Unit test primer
+    - Asertcije: `assertEquals()`
 
 10. ✅ `that_true_is_true`
     - Unit test primer
