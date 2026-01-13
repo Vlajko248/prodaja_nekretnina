@@ -6,7 +6,13 @@
 <div class="card border-0" style="max-width: 820px;">
     <div class="card-body">
         <form method="POST" action="{{ route('prodaja.store') }}">
-            @include('prodaje._form', ['prodaja' => null])
+            @include('prodaje._form', [
+                'prodaja' => null,
+                'kupci' => $kupci,
+                'agenti' => $agenti,
+                'nekretnine' => $nekretnine,
+                'statusi' => $statusi,
+            ])
         </form>
     </div>
 </div>

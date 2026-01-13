@@ -45,7 +45,7 @@
 <div class="mb-3">
     <label class="form-label">Datum kreiranja</label>
     <input type="date" name="datum_kreiranja" class="form-control @error('datum_kreiranja') is-invalid @enderror" 
-           value="{{ old('datum_kreiranja', isset($prodaja) ? $prodaja->datum_kreiranja : now()->toDateString()) }}">
+           value="{{ old('datum_kreiranja', isset($prodaja) && $prodaja ? $prodaja->datum_kreiranja->format('Y-m-d') : now()->toDateString()) }}">
     @error('datum_kreiranja') <div class="invalid-feedback">{{ $message }}</div> @enderror
 </div>
 

@@ -10,7 +10,13 @@
     <div class="card-body">
         <form method="POST" action="{{ route('prodaja.update', $prodaja) }}">
             @method('PUT')
-            @include('prodaje._form', ['prodaja' => $prodaja])
+            @include('prodaje._form', [
+                'prodaja' => $prodaja,
+                'kupci' => $kupci,
+                'agenti' => $agenti,
+                'nekretnine' => $nekretnine,
+                'statusi' => $statusi,
+            ])
         </form>
     </div>
 </div>
