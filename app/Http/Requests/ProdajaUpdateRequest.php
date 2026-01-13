@@ -29,7 +29,7 @@ class ProdajaUpdateRequest extends FormRequest
             'kupac_id' => ['required', 'integer', 'exists:kupacs,id'],
             'agent_id' => ['required', 'integer', 'exists:agents,id'],
             'nekretnina_id' => ['required', 'integer', 'exists:nekretninas,id'],
-            'datum_kreiranja' => ['required', 'date'],
+            'datum_kreiranja' => ['nullable', 'date'],
             'status' => ['required', 'string'],
         ];
     }

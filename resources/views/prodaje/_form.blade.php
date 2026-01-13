@@ -42,6 +42,13 @@
     @error('agent_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
 </div>
 
+<div class="mb-3">
+    <label class="form-label">Datum kreiranja</label>
+    <input type="date" name="datum_kreiranja" class="form-control @error('datum_kreiranja') is-invalid @enderror" 
+           value="{{ old('datum_kreiranja', isset($prodaja) ? $prodaja->datum_kreiranja : now()->toDateString()) }}">
+    @error('datum_kreiranja') <div class="invalid-feedback">{{ $message }}</div> @enderror
+</div>
+
 <div class="mb-4">
     <label class="form-label">Status prodaje</label>
     <select name="status" class="form-select @error('status') is-invalid @enderror">
